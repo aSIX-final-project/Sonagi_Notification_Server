@@ -1,0 +1,24 @@
+{
+  "name": "expo_notification_server",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "node server.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "expo": "~49.0.15",
+    "expo-server-sdk": "^3.7.0",
+    "expo-status-bar": "~1.6.0",
+    "express": "^4.18.2",
+    "react": "18.2.0",
+    "react-native": "0.72.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}
