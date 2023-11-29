@@ -59,7 +59,7 @@ app.get('/sendMemberNotification', async (req, res) => {
             }
         }
 
-        await sendExpoPushNotification(expoTokens);
+        await sendExpoPushNotificationMember(expoTokens);
 
         res.status(200).json({ message: 'Successfully got coordinates and sent messages to members within 5km', coordinates: coordinates });
     } catch (error) {
@@ -68,7 +68,7 @@ app.get('/sendMemberNotification', async (req, res) => {
     }
 });
 
-const sendExpoPushNotification = async (tokens) => {
+const sendExpoPushNotificationMember = async (tokens) => {
     for (const expotoken of tokens) {
         const notification = {
             to: expotoken,
@@ -94,8 +94,51 @@ const sendExpoPushNotification = async (tokens) => {
 
 // GET 요청 처리
 app.get('/sendResNotification', async (req, res) => {
-    
+    const adName = req.query.adName;
+    const resId = req.query.resId;
+    const serving = req.query.serving;
+    const foodName = req.query.foodName;
+
+    const formData = {
+        id: resId,
+    };
+
+    // 폼 데이터를 JSON 문자열로 변환하여 확인
+    const jsonData = JSON.stringify(formData);
+    console.log(jsonData);
+
+    // 백엔드 서버로 POST 요청 보내기
+    const resResponse = await axios.post(
+        "https://port-0-sonagi-app-project-1drvf2lloka4swg.sel5.cloudtype.app/boot/restaurant/findById",
+        formData
+    );
+    const expoToken = resResponse.data[0].expotoken;
+    console.log(resResponse.data);
+    console.log(expoToken);  // expotoken 값 출력
+    await sendExpoPushNotificationRes(expoToken, adName, serving, foodName);
 });
+
+const sendExpoPushNotificationRes = async (expoToken, adName, serving, foodName) => {
+
+    const notification = {
+        to: expoToken,
+        title: '기부 요청 알림',
+        body: `${adName} 에서 ${foodName}을 ${serving}인분 기부 요청을 하였습니다.`,
+        sound: 'default',
+        data: { withSome: 'data' },
+    };
+    try {
+        const response = await axios.post('https://exp.host/--/api/v2/push/send', notification);
+        if (response.status === 200) {
+            console.log(`Successfully sent message to member with token: ${expoToken}`);
+        } else {
+            console.error(`Failed to send message to member with token: ${expoToken}`);
+        }
+    } catch (error) {
+        console.error(`Error sending message to member with token: ${expoToken}, error: ${error.message}`);
+    }
+};
+
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
