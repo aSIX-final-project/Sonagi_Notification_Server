@@ -14,6 +14,7 @@
     "expo-server-sdk": "^3.7.0",
     "expo-status-bar": "~1.6.0",
     "express": "^4.18.2",
+    "node-cron": "^3.0.3",
     "react": "18.2.0",
     "react-native": "0.72.6"
   },

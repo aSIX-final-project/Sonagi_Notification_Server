@@ -1,25 +1,7 @@
 const axios = require('axios');
 const express = require('express');
 const app = express();
-
-// Haversine 공식을 이용한 거리 계산 함수
-function getDistance(lat1, lon1, lat2, lon2) {
-    var R = 6371; // Radius of the earth in km
-    var dLat = deg2rad(lat2 - lat1);
-    var dLon = deg2rad(lon2 - lon1);
-    var a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        ;
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c; // Distance in km
-    return d;
-}
-
-function deg2rad(deg) {
-    return deg * (Math.PI / 180)
-}
+const cron = require('node-cron');
 
 // GET 요청 처리
 app.get('/sendMemberNotification', async (req, res) => {
@@ -68,30 +50,6 @@ app.get('/sendMemberNotification', async (req, res) => {
     }
 });
 
-const sendExpoPushNotificationMember = async (tokens) => {
-    for (const expotoken of tokens) {
-        const notification = {
-            to: expotoken,
-            title: '음식 등록 알림',
-            body: '5km 이내 식당에서 음식이 등록되었습니다!',
-            sound: 'default',
-            data: { withSome: 'data' },
-        };
-        try {
-            const response = await axios.post('https://exp.host/--/api/v2/push/send', notification);
-            if (response.status === 200) {
-                console.log(`Successfully sent message to member with token: ${expotoken}`);
-            } else {
-                console.error(`Failed to send message to member with token: ${expotoken}`);
-            }
-        } catch (error) {
-            console.error(`Error sending message to member with token: ${expotoken}, error: ${error.message}`);
-        }
-    }
-};
-
-
-
 // GET 요청 처리
 app.get('/sendResNotification', async (req, res) => {
     const adName = req.query.adName;
@@ -118,6 +76,47 @@ app.get('/sendResNotification', async (req, res) => {
     await sendExpoPushNotificationRes(expoToken, adName, serving, foodName);
 });
 
+// 매일 00시에 실행되는 스케줄러 설정
+cron.schedule('0 0 * * *', async () => {
+    try {
+        // 백엔드 서버로 POST 요청 보내기
+        const resResponse = await axios.post(
+            "https://port-0-sonagi-app-project-1drvf2lloka4swg.sel5.cloudtype.app/boot/food/deleteAll"
+        );
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+});
+
+
+
+
+const sendExpoPushNotificationMember = async (tokens) => {
+    for (const expotoken of tokens) {
+        const notification = {
+            to: expotoken,
+            title: '음식 등록 알림',
+            body: '5km 이내 식당에서 음식이 등록되었습니다!',
+            sound: 'default',
+            data: { withSome: 'data' },
+        };
+        try {
+            const response = await axios.post('https://exp.host/--/api/v2/push/send', notification);
+            if (response.status === 200) {
+                console.log(`Successfully sent message to member with token: ${expotoken}`);
+            } else {
+                console.error(`Failed to send message to member with token: ${expotoken}`);
+            }
+        } catch (error) {
+            console.error(`Error sending message to member with token: ${expotoken}, error: ${error.message}`);
+        }
+    }
+};
+
+
+
+
+
 const sendExpoPushNotificationRes = async (expoToken, adName, serving, foodName) => {
 
     const notification = {
@@ -138,6 +137,26 @@ const sendExpoPushNotificationRes = async (expoToken, adName, serving, foodName)
         console.error(`Error sending message to member with token: ${expoToken}, error: ${error.message}`);
     }
 };
+
+
+// Haversine 공식을 이용한 거리 계산 함수
+function getDistance(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1);
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+}
+
+function deg2rad(deg) {
+    return deg * (Math.PI / 180)
+}
 
 
 app.listen(3000, () => {
