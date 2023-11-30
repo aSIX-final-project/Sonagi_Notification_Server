@@ -76,19 +76,6 @@ app.get('/sendResNotification', async (req, res) => {
     await sendExpoPushNotificationRes(expoToken, adName, serving, foodName);
 });
 
-// 매일 00시에 실행되는 스케줄러 설정
-cron.schedule('0 0 * * *', async () => {
-    try {
-        // 백엔드 서버로 POST 요청 보내기
-        const resResponse = await axios.post(
-            "https://port-0-sonagi-app-project-1drvf2lloka4swg.sel5.cloudtype.app/boot/food/deleteAll"
-        );
-    } catch (error) {
-        console.error('Error:', error.message);
-    }
-});
-
-
 
 
 const sendExpoPushNotificationMember = async (tokens) => {
@@ -112,9 +99,6 @@ const sendExpoPushNotificationMember = async (tokens) => {
         }
     }
 };
-
-
-
 
 
 const sendExpoPushNotificationRes = async (expoToken, adName, serving, foodName) => {
