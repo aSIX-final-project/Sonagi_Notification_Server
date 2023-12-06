@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^1.6.2",
+    "cors": "^2.8.5",
     "expo": "~49.0.15",
     "expo-server-sdk": "^3.7.0",
     "expo-status-bar": "~1.6.0",

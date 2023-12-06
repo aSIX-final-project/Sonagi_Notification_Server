@@ -1,15 +1,23 @@
 {
   "expo": {
-    "name": "expo_notification_server",
-    "slug": "expo_notification_server",
+    "name": "sonagiApp",
+    "slug": "sonagiApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "notification": {
+      "iosDisplayInForeground": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8912d4db-0e0b-4d3c-b650-4f40bce2e116"
+      }
+    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#44A5FF"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,7 +27,6 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
