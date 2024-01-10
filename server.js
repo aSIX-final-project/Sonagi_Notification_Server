@@ -243,7 +243,7 @@ const sendExpoPushNotificationMember = async (tokens) => {
 
 
 
-app.post('/cex', async (req, res) => {
+app.post('/push', async (req, res) => {
     // Expo 푸시 알림 발신 함수
     function sendPushNotifications() {
         const messages = [{
